@@ -1,17 +1,17 @@
 use serde::{Deserialize, Serialize};
 use cosmwasm_std::{Addr, Storage};
-use cosmwasm_storage::{ReadonlySingleton, Singleton};
+use cosmwasm_storage::{singleton, singleton_read, ReadonlySingleton, Singleton};
 use universe::species::{SapienceScale, Sapient};
 
-pub fn config(storage: &mut dyn Storage) -> Singleton<State> {
+static CONFIG_KEY: &[u8] = b"config";
 
+pub fn config(storage: &mut dyn Storage) -> Singleton<State> {
+    singleton(storage, CONFIG_KEY)
 }
 
 pub fn config_read(storage: &dyn Storage) -> ReadonlySingleton<State> {
-
+    singleton_read(storage, CONFIG_KEY)
 }
-
-// add the config_read signature here
 
 #[derive(Serialize, Deserialize)]
 pub struct State {
