@@ -5,6 +5,18 @@ use crate::error::ContractError;
 use crate::msg::{InstantiateMsg};
 use crate::state::{config, State};
 
+
+#[entry_point]
+pub fn query(
+    deps: Deps,
+    _env: Env,
+    msg: QueryMsg,
+) -> StdResult<Binary> {
+    
+}
+
+
+
 #[entry_point]
 pub fn execute(
     deps: DepsMut,
