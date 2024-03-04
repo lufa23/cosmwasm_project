@@ -1,4 +1,4 @@
-use cosmwasm_std::{Storage};
+use cosmwasm_std::{Addr, Storage};
 use cosmwasm_storage::{
     bucket, bucket_read, singleton, singleton_read, Bucket, ReadonlyBucket, ReadonlySingleton,
     Singleton,
@@ -18,14 +18,6 @@ pub fn imbiber_read(storage: &dyn Storage) -> ReadonlyBucket<Imbiber> {
     bucket_read(storage, IMBIBER_KEY)
 }
 
-pub fn config(storage: &mut dyn Storage) -> Singleton<State> {
-    singleton(storage, CONFIG_KEY)
-}
-
-pub fn config_read(storage: &dyn Storage) -> ReadonlySingleton<State> {
-    singleton_read(storage, CONFIG_KEY)
-}
-
 #[derive(Serialize, Deserialize, JsonSchema)]
 pub struct State {
     pub owner: Addr,
@@ -40,4 +32,12 @@ pub struct Imbiber {
     pub species: Species,
     pub name: String,
     pub cyborg_dna: Vec<u8>,
+}
+
+pub fn config(storage: &mut dyn Storage) -> Singleton<State> {
+    singleton(storage, CONFIG_KEY)
+}
+
+pub fn config_read(storage: &dyn Storage) -> ReadonlySingleton<State> {
+    singleton_read(storage, CONFIG_KEY)
 }
