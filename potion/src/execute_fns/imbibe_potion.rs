@@ -1,6 +1,8 @@
 use crate::error::ContractError;
-use crate::state::{config, imbiber, Imbiber};
-use cosmwasm_std::{DepsMut, MessageInfo, Response};
+use crate::state::{config};
+use cosmwasm_std::{
+    CosmosMsg, DepsMut, MessageInfo, Response, SubMsg,
+};
 use universe::species::Species;
 pub fn imbibe_potion(
     name: String,
@@ -16,7 +18,7 @@ pub fn imbibe_potion(
     state.swigs = swigs - 1;
     config(deps.storage).save(&state)?;
     let cyborg_dna = b"123ABC".to_vec();
-    let cyborg = Imbiber {
+    let new_cyborg = Imbiber {
         address: info.sender.clone(),
         species: species.clone(),
         name: name.clone(),
@@ -24,4 +26,7 @@ pub fn imbibe_potion(
     };    
     let key = info.sender.to_string();
     imbiber(deps.storage).save(key.as_bytes(), &cyborg)?;
+    let msg = CosmosMsg::Wasm();
+    let submsg = SubMsg::reply_on_error(msg, 1);
+    Ok(Response::new().add_submessage(submsg))
 }
