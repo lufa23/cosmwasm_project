@@ -1,26 +1,43 @@
-use cosmwasm_std::{entry_point, DepsMut, Env, MessageInfo, Response};
-use crate::msg::{InstantiateMsg};
-use crate::state::{config, State};
-use crate::error::ContractError;
+use cosmwasm_std::{Storage};
+use cosmwasm_storage::{
+    bucket, bucket_read, singleton, singleton_read, Bucket, ReadonlyBucket, ReadonlySingleton,
+    Singleton,
+};
+use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
+use universe::species::Species;
 
-static DEFAULT_NUMBER_OF_SWIGS: u8 = 3;
+static CONFIG_KEY: &[u8] = b"config";
+static IMBIBER_KEY: &[u8] = b"imbiber";
 
-#[entry_point]
-pub fn instantiate(
-    deps: DepsMut,
-    _env: Env,
-    info: MessageInfo,
-    msg: InstantiateMsg,
-) -> Result<Response, ContractError> {
+pub fn imbiber(storage: &mut dyn Storage) -> Bucket<Imbiber> {
+    bucket(storage, IMBIBER_KEY)
+}
 
-    let state = State {
-        owner: info.sender,
-        dna_length: msg.dna_length,
-        dna_modulus: msg.dna_modulus,
-        swigs: DEFAULT_NUMBER_OF_SWIGS,
-    };
-    config(deps.storage).save(&state)?;
+pub fn imbiber_read(storage: &dyn Storage) -> ReadonlyBucket<Imbiber> {
+    bucket_read(storage, IMBIBER_KEY)
+}
 
-    
-    Ok(Response::default())
+pub fn config(storage: &mut dyn Storage) -> Singleton<State> {
+    singleton(storage, CONFIG_KEY)
+}
+
+pub fn config_read(storage: &dyn Storage) -> ReadonlySingleton<State> {
+    singleton_read(storage, CONFIG_KEY)
+}
+
+#[derive(Serialize, Deserialize, JsonSchema)]
+pub struct State {
+    pub owner: Addr,
+    pub dna_length: usize,
+    pub dna_modulus: u8,
+    pub swigs: u8,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct Imbiber {
+    pub address: Addr,
+    pub species: Species,
+    pub name: String,
+    pub cyborg_dna: Vec<u8>,
 }
