@@ -4,12 +4,13 @@ use cosmwasm_std::{
 use crate::error::ContractError;
 use crate::msg::{InstantiateMsg};
 use crate::state::{config, State};
+
 #[entry_point]
-pub fn query(
-    deps: Deps,
-    _env: Env,
-    msg: QueryMsg
-) -> StdResult<Binary> {
+pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
+    match msg {
+        QueryMsg::JumpRingPreCheck { traveler } => jumpring_check(traveler),
+        QueryMsg::MinimumSapience {} => minimum_sapience(deps),
+    }
 }
 
 #[entry_point]
