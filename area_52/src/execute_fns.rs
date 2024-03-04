@@ -12,4 +12,9 @@ pub fn set_planet_name(
         return Err(ContractError::Unauthorized {});
     }
 
+    state.planet_name = to.clone();
+    config(deps.storage).save(&state)?;
+
+
+    Ok(Response::new().add_attribute("action", "set_planet_name"))
 }
